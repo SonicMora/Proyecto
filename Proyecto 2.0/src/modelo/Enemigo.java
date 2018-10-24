@@ -16,6 +16,8 @@ public class Enemigo implements Serializable{
 
 	private boolean vivo;
 	
+	private Enemigo siguiente;
+	
 	public Enemigo(int posX, int posY, int puntos, String imagen, boolean vivo, char direccion) {
 		this.posX = posX;
 		this.posY = posY;
@@ -79,5 +81,13 @@ public class Enemigo implements Serializable{
 
 	public void setDireccion(char direccion) {
 		this.direccion = direccion;
+	}
+
+	public Enemigo getSiguiente() {
+		return siguiente;
+	}
+
+	public void setSiguiente(Enemigo siguiente) {
+		this.siguiente = siguiente;
 	}
 }

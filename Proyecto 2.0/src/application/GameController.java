@@ -22,17 +22,16 @@ import modelo.Personaje;
 
 public class GameController extends Scene{
 		
-	@FXML private ImageView vida1;
-	@FXML private ImageView vida2;
-	@FXML private ImageView vida3;
 	@FXML private ImageView fondo;
 	@FXML private ImageView imgUsuario;
 
-	@FXML private ArrayList<ImageView> enemigos;
 	@FXML private ImageView laser;
+	
+	@FXML private ArrayList<ImageView> enemigos;
+	
 	@FXML private Timeline animacionD;
 	@FXML private Timeline animacionI;
-	@FXML private Timeline animacionB;	
+	@FXML private Timeline animacionB;
 		
 	@FXML private Pane ajam;
 	
@@ -202,7 +201,7 @@ public class GameController extends Scene{
 	public void corregirUsuario() {
 		if(imgUsuario.getX()>=bounds.getMaxX()-40) {
 			detener(animacionD);
-		}else if(imgUsuario.getX()<bounds.getMinX()+30){
+		}else if(imgUsuario.getX()<bounds.getMinX()+40){
 			detener(animacionI);
 		}
 	}

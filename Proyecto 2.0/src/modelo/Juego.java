@@ -16,19 +16,55 @@ public class Juego implements Serializable{
 	public static final int ALTO_VENTANA=621;
 	
 	private Usuario usuario;
-	
-	private String rutaEnemigos;
+		
+	private ListaEnemigo listaEnemigos;
+	private ListaUsuario listaUsuarios;
 	
 	private ArrayList<Usuario> usuarios;
 	private ArrayList<Enemigo> enemigos;
 	
 	public Juego() {
-		rutaEnemigos="Boss/KingCristian.png";
-		
-		usuario=new Usuario("Mora", "epa");
+		listaEnemigos=new ListaEnemigo();
+		setListaUsuarios(new ListaUsuario());
+				
+		usuario=new Usuario("Mora");
 		enemigos=new ArrayList<Enemigo>();
 		
 		inicializarEnemigos();
+		inicializarEnemigos2();
+	}
+	
+	public void inicializarEnemigos2() {
+		SecureRandom ran=new SecureRandom();
+		int cont=10;
+		int x=50;
+		while(cont>0) {
+			int n=1+ran.nextInt(6);
+			String ruta="";
+			switch(n) {
+			case 1:
+				ruta="Boss/GodCuartas.png";
+				break;
+			case 2: 
+				ruta="Boss/KingCristian.png";
+				break;
+			case 3: 
+				ruta="Boss/LordBarrios.png";
+				break;
+			case 4: 
+				ruta="Boss/PapiBusta.png";
+				break;
+			case 5: 
+				ruta="Boss/QueenNorah.png";
+				break;
+			case 6: 
+				ruta="Boss/YakeBoss.png";
+				break;
+			}
+			listaEnemigos.add(new Enemigo(x, 20+ran.nextInt(50), 100, ruta, true, 'D'));
+			cont--;
+			x+=40;
+		}
 	}
 	
 	public void inicializarEnemigos() {
@@ -36,7 +72,29 @@ public class Juego implements Serializable{
 		int cont=10;
 		int x=50;
 		while(cont>0) {
-			enemigos.add(new Enemigo(x, 20+ran.nextInt(50), 100, rutaEnemigos, true, 'D'));
+			int n=1+ran.nextInt(6);
+			String ruta="";
+			switch(n) {
+			case 1:
+				ruta="Boss/GodCuartas.png";
+				break;
+			case 2: 
+				ruta="Boss/KingCristian.png";
+				break;
+			case 3: 
+				ruta="Boss/LordBarrios.png";
+				break;
+			case 4: 
+				ruta="Boss/PapiBusta.png";
+				break;
+			case 5: 
+				ruta="Boss/QueenNorah.png";
+				break;
+			case 6: 
+				ruta="Boss/YakeBoss.png";
+				break;
+			}
+			enemigos.add(new Enemigo(x, 20+ran.nextInt(50), 100, ruta, true, 'D'));
 			cont--;
 			x+=40;
 		}
@@ -49,7 +107,29 @@ public class Juego implements Serializable{
 		int cont=10;
 		int x=50;
 		while(cont>0) {
-			enemigos.add(new EnemigoAgresivo(x, 20+ran.nextInt(50), 100, rutaEnemigos, true, 'D'));
+			int n=1+ran.nextInt(6);
+			String ruta="";
+			switch(n) {
+			case 1:
+				ruta="Boss/GodCuartas.png";
+				break;
+			case 2: 
+				ruta="Boss/KingCristian.png";
+				break;
+			case 3: 
+				ruta="Boss/LordBarrios.png";
+				break;
+			case 4: 
+				ruta="Boss/PapiBusta.png";
+				break;
+			case 5: 
+				ruta="Boss/QueenNorah.png";
+				break;
+			case 6: 
+				ruta="Boss/YakeBoss.png";
+				break;
+			}
+			enemigos.add(new EnemigoAgresivo(x, 20+ran.nextInt(50), 100, ruta, true, 'D'));
 			cont--;
 			x+=40;
 		}
@@ -65,7 +145,7 @@ public class Juego implements Serializable{
 		}catch(Exception e) {
 			usuarios=new ArrayList<Usuario>();
 		}finally {
-			usuario=new Usuario(nombre, contra);
+			usuario=new Usuario(nombre);
 		}
 	}
 
@@ -77,30 +157,6 @@ public class Juego implements Serializable{
 		}catch(IOException e) {
 			System.out.println("Ha ocurrido un error");
 		}
-	}
-	
-	public Usuario getUsuario() {
-		return usuario;
-	}
-
-	public void setUsuario(Usuario usuario) {
-		this.usuario = usuario;
-	}
-
-	public ArrayList<Usuario> getUsuarios() {
-		return usuarios;
-	}
-
-	public void setUsuarios(ArrayList<Usuario> usuarios) {
-		this.usuarios = usuarios;
-	}
-
-	public ArrayList<Enemigo> getEnemigos() {
-		return enemigos;
-	}
-
-	public void setEnemigos(ArrayList<Enemigo> enemigos) {
-		this.enemigos = enemigos;
 	}
 	
 	public int buscarUsuarioMayorPuntaje() {
@@ -163,6 +219,30 @@ public class Juego implements Serializable{
 		return usuarios.get(medio).toString();
 	}
 	
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+
+	public ArrayList<Usuario> getUsuarios() {
+		return usuarios;
+	}
+
+	public void setUsuarios(ArrayList<Usuario> usuarios) {
+		this.usuarios = usuarios;
+	}
+
+	public ArrayList<Enemigo> getEnemigos() {
+		return enemigos;
+	}
+
+	public void setEnemigos(ArrayList<Enemigo> enemigos) {
+		this.enemigos = enemigos;
+	}
+	
 	public void moverDerecha() {
 		usuario.moverDerecha();
 	}
@@ -171,11 +251,22 @@ public class Juego implements Serializable{
 		usuario.moverIzquierda();
 	}
 	
-	public void setRutaEnemigos(String rutaEnemigos) {
-		this.rutaEnemigos=rutaEnemigos;
+	public ListaEnemigo getListaEnemigos() {
+		return listaEnemigos;
+	}
+
+	public void setListaEnemigos(ListaEnemigo listaEnemigos) {
+		this.listaEnemigos = listaEnemigos;
+	}
+
+	public ListaUsuario getListaUsuarios() {
+		return listaUsuarios;
+	}
+
+	public void setListaUsuarios(ListaUsuario listaUsuarios) {
+		this.listaUsuarios = listaUsuarios;
 	}
 	
-	public String getRutaEnemigos() {
-		return rutaEnemigos;
-	}
+	
+	
 }

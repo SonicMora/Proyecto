@@ -11,17 +11,18 @@ public class Usuario implements Serializable, Comparable<Usuario>{
 	private int puntos;
 	private int nivel;
 	
-	private String nombre;
-	private String contra;
-	
+	private String nombre;	
 
-	public Usuario(String nombre, String contra) {
+	private Usuario siguiente;
+	
+	public Usuario(String nombre) {
 		avatar=new Personaje(Personaje.IZQ);
 		this.vidas = 3;
 		this.puntos = 0;
 		this.nivel = 0;
 		this.nombre = nombre;
-		this.contra = contra;
+		
+		siguiente=null;
 	}
 
 	public Personaje getAvatar() {
@@ -64,14 +65,6 @@ public class Usuario implements Serializable, Comparable<Usuario>{
 		this.nombre = nombre;
 	}
 
-	public String getContra() {
-		return contra;
-	}
-
-	public void setContra(String contra) {
-		this.contra = contra;
-	}
-
 	public void perderVida() {
 		this.setVidas(this.getVidas()-1);
 		avatar.reaparecer();
@@ -94,5 +87,13 @@ public class Usuario implements Serializable, Comparable<Usuario>{
 	
 	public void moverIzquierda() {
 		avatar.moverIzquierda();
+	}
+
+	public Usuario getSiguiente() {
+		return siguiente;
+	}
+
+	public void setSiguiente(Usuario siguiente) {
+		this.siguiente = siguiente;
 	}
 }
