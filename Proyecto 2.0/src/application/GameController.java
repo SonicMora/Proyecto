@@ -4,47 +4,62 @@ import java.util.ArrayList;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
 import modelo.Enemigo;
+import modelo.EnemigoAgresivo;
 import modelo.Personaje;
 
-public class GameController extends Scene{
-		
-	@FXML private ImageView fondo;
-	@FXML private ImageView imgUsuario;
+public class GameController extends Scene {
+	
+	private ImageView fondo;
+	private ImageView imgUsuario;
+	
+	private ImageView laserU;
 
-	@FXML private ImageView laser;
+	private ArrayList<ImageView> enemigos;
 	
-	@FXML private ArrayList<ImageView> enemigos;
+	private Timeline animacionD;
+	private Timeline animacionI;
+	private Timeline animacionB;
+	private Timeline animacionBE;
+	private Timeline animationE;
 	
-	@FXML private Timeline animacionD;
-	@FXML private Timeline animacionI;
-	@FXML private Timeline animacionB;
-		
-	@FXML private Pane ajam;
+	private Button butGuardar;
 	
-	@FXML private BorderPane bP;
+	private Pane ajam;
+	private Pane ajam2;
 	
-	@FXML private Canvas canvas;
+	private BorderPane bP;
 	
-	@FXML private Bounds bounds;
+	private Canvas canvas;
+	
+	private Bounds bounds;
 	
 	public GameController(BorderPane root, double width, double height) {
 		super(root, width, height);
 		
 		bP=root;
+//		
+//		Pane costado=new Pane();
+//		
+//		costado.getChildren().add(new Label("Para guardar presione G"));
+//		costado.getChildren().add(new Label("Para ver puntajes presione P"));
+//		costado.getChildren().add(new Label("Para disparar presione ESPACIO"));
+//		costado.getChildren().add(new Label("Para moverse presione <- Ó ->"));
 		
 		canvas=new Canvas();
 		canvas.widthProperty().bind(bP.widthProperty());
@@ -53,13 +68,16 @@ public class GameController extends Scene{
 		primitivas(canvas.getGraphicsContext2D());
 		
 		ajam=new Pane();
+		ajam2=new Pane();
+		
+		butGuardar=new Button("Guardar");
 		
 		setEnemigos(new ArrayList<ImageView>());
 		inicializarEnemigos();
 		
-		laser=new ImageView(new Image("data/laser.png"));
-		laser.setFitWidth(Main.getGame().getUsuario().getAvatar().getBala().getAncho());
-		laser.setFitHeight(Main.getGame().getUsuario().getAvatar().getBala().getLargo());
+		laserU=new ImageView(new Image("data/laser.png"));
+		laserU.setFitWidth(Main.getGame().getUsuario().getAvatar().getBala().getAncho());
+		laserU.setFitHeight(Main.getGame().getUsuario().getAvatar().getBala().getLargo());
 				
 		imgUsuario=new ImageView();
 		imgUsuario.setImage(new Image(Main.getGame().getUsuario().getAvatar().getImagen()));
@@ -75,30 +93,65 @@ public class GameController extends Scene{
 				
 		ajam.getChildren().add(fondo);
 		ajam.getChildren().add(imgUsuario);
-		ajam.getChildren().add(laser);
+		ajam.getChildren().add(laserU);
+		
+//		ajam2.getChildren().add(butGuardar);
+		
+		butGuardar.setOnAction(e->{
+			guardar();
+		});
 		
 		bP.setCenter(ajam);
 		bP.setTop(canvas);
+		bP.setBottom(ajam2);
+//		bP.setRight(costado);
 		
 		bounds=ajam.getBoundsInLocal();
 		
-		for(int i=0;i<getEnemigos().size();i++) {
-			ajam.getChildren().add(getEnemigos().get(i));
-		}
+		addEnemigos();
 		
-		laser.setVisible(false);
+		laserU.setVisible(false);
 		moverEnemigos();
 	}
 	
+	public void guardar() {
+		System.out.println("Guardó");
+	}
+	
+	public void addEnemigos(){
+		for(int i=0;i<getEnemigos().size();i++) {
+			ajam.getChildren().add(getEnemigos().get(i));
+			getEnemigos().get(i).setVisible(true);
+		}
+	}
+	
+	
 	public void moverEnemigos() {
-		Timeline animationE=new Timeline(new KeyFrame(Duration.millis(100), e->{
+		animationE=new Timeline(new KeyFrame(Duration.millis(100), e->{
 			for(int i=0;i<getEnemigos().size();i++) {
-				corregirEnemigos(Main.getGame().getEnemigos().get(i));
-				getEnemigos().get(i).setX(Main.getGame().getEnemigos().get(i).getPosX());
+				disparoEnemigo();
+				corregirEnemigos(Main.getGame().getListaEnemigos().get(i));
+				getEnemigos().get(i).setX(Main.getGame().getListaEnemigos().get(i).getPosX());
 			}
 		}));
 		animationE.setCycleCount(Timeline.INDEFINITE);
 		animationE.play();
+	}
+	
+	public void disparoEnemigo() {
+		animacionBE=new Timeline(new KeyFrame(Duration.millis(30), e->{
+			for(int i=0;i<getEnemigos().size();i++) {
+				if(Main.getGame().getListaEnemigos().get(i) instanceof EnemigoAgresivo) {
+					EnemigoAgresivo save=(EnemigoAgresivo)Main.getGame().getListaEnemigos().get(i);
+					if(save.isDisparando()) {
+						System.out.println("yeet");
+						save.disparar();
+					}
+				}
+			}
+		}));
+		animacionBE.setCycleCount(Timeline.INDEFINITE);
+		animacionBE.play();
 	}
 	
 	public void moverI() {
@@ -120,7 +173,7 @@ public class GameController extends Scene{
 			Main.getGame().getUsuario().getAvatar().moverDerecha();
 			imgUsuario.setImage(new Image(Main.getGame().getUsuario().getAvatar().getImagen()));
 			imgUsuario.setX(Main.getGame().getUsuario().getAvatar().getPosX());
-			corregirUsuario();
+			corregirUsuario();	
 		}));
 		animacionD.setCycleCount(Timeline.INDEFINITE);
 		animacionD.play();
@@ -129,50 +182,42 @@ public class GameController extends Scene{
 	
 	public void disparar() {
 		animacionB=new Timeline(new KeyFrame(Duration.millis(100), e->{
-
 			Main.getGame().getUsuario().getAvatar().disparar();
-					
-			laser.setX(Main.getGame().getUsuario().getAvatar().getBala().getX());
-			laser.setY(Main.getGame().getUsuario().getAvatar().getBala().getY()+60);
+			laserU.setX(Main.getGame().getUsuario().getAvatar().getBala().getX());
+			laserU.setY(Main.getGame().getUsuario().getAvatar().getBala().getY()+60);
 			
 			for(int i=0;i<getEnemigos().size();i++) {
-				if(getEnemigos().get(i).contains(new Point2D(laser.getX(), laser.getY()))) {
-					Main.getGame().getEnemigos().get(i).setVivo(false);
+				if(getEnemigos().get(i).contains(new Point2D(laserU.getX(), laserU.getY()))) {
+					Main.getGame().getListaEnemigos().get(i).setVivo(false);
+					Main.getGame().getUsuario().setPuntos(Main.getGame().getUsuario().getPuntos()+Main.getGame().getListaEnemigos().get(i).getPuntos());
 					getEnemigos().get(i).setVisible(false);
 					ajam.getChildren().remove(getEnemigos().get(i));
 					pasarLvl();
 				}
 			}
-			laser.setVisible(true);
+			laserU.setVisible(true);
 			
-			Main.getGame().getUsuario().getAvatar().reload();
+			Main.getGame().getUsuario().getAvatar().reloadP();
 			dejarDeDisparar();
 		}));
 		animacionB.setCycleCount(Timeline.INDEFINITE);
 		animacionB.play();
 	}
 	
-	/**
-	 * 
-	 * HAY QUE HACER UN METOTO clear(); CUANDO IMPLEMENTE LAS LISTAS ENLAZADAS 
-	 * 
-	 */
-	
 	public void pasarLvl() {
 		int muertos=0;
-		for(int i=0;i<Main.getGame().getEnemigos().size();i++) {
-			if(Main.getGame().getEnemigos().get(i).isVivo()==false) {
+		for(int i=0;i<Main.getGame().getListaEnemigos().size();i++) {
+			if(Main.getGame().getListaEnemigos().get(i).isVivo()==false) {
 				muertos++;
 			}
 		}
-		if(muertos==Main.getGame().getEnemigos().size()) {
-			Main.getGame().inicializarEnemigosAgresivos();
-			for(int i=0;i<enemigos.size();i++) {
-				ajam.getChildren().add(enemigos.get(i));
-			}
+		if(muertos==Main.getGame().getListaEnemigos().size()) {
+			Main.getGame().cargarEnemigosAgresivos();
+			Main.getGame().getUsuario().setNivel(2);
+			addEnemigos();
 		}
 	}
-	
+		
 	public void corregirEnemigos(Enemigo este) {		 
 		if(este.getDireccion()=='D' && este.getPosX()<bounds.getMaxX()) {
 			este.moverD();
@@ -190,7 +235,7 @@ public class GameController extends Scene{
 	public void dejarDeDisparar() {
 		if(Main.getGame().getUsuario().getAvatar().isDisparando()==false) {
 			detener(getAnimacionB());
-			laser.setVisible(false);
+			laserU.setVisible(false);
 		}
 	}
 	
@@ -208,8 +253,8 @@ public class GameController extends Scene{
 
 	public void inicializarEnemigos() {
 		int cont=0;
-		while(cont<Main.getGame().getEnemigos().size()) {
-			getEnemigos().add(new ImageView(new Image(Main.getGame().getEnemigos().get(cont).getImagen(), 50, 50, true, true)));
+		while(cont<Main.getGame().getListaEnemigos().size()) {
+			getEnemigos().add(new ImageView(new Image(Main.getGame().getListaEnemigos().get(cont).getImagen(), 50, 50, true, true)));
 			cont++;
 		}
 		posicionarEnemigos();
@@ -217,8 +262,8 @@ public class GameController extends Scene{
 	
 	public void posicionarEnemigos() {
 		for(int i=0;i<getEnemigos().size();i++) {
-			getEnemigos().get(i).setX(Main.getGame().getEnemigos().get(i).getPosX());
-			getEnemigos().get(i).setY(Main.getGame().getEnemigos().get(i).getPosY());
+			getEnemigos().get(i).setX(Main.getGame().getListaEnemigos().get(i).getPosX());
+			getEnemigos().get(i).setY(Main.getGame().getListaEnemigos().get(i).getPosY());
 		}
 	}
 	
@@ -231,6 +276,17 @@ public class GameController extends Scene{
 		g.drawImage(new Image("data/usuarioD.png"), 270, 10, 30, 30);
 		g.drawImage(new Image("data/usuarioD.png"), 300, 10, 30, 30);
 		g.drawImage(new Image("data/usuarioD.png"), 330, 10, 30, 30);
+		pintarPuntaje(g);
+	}
+	
+	public void pintarPuntaje(GraphicsContext g) {
+		Timeline animacionPuntaje=new Timeline(new KeyFrame(Duration.millis(1), e->{
+			g.setFont(new Font("ARCADECLASSIC", 20));
+			g.setFill(Color.BLACK);
+			g.fillText(Integer.toString(Main.getGame().getUsuario().getPuntos()), 5, 40);
+		}));
+		animacionPuntaje.setCycleCount(Timeline.INDEFINITE);
+		animacionPuntaje.play();
 	}
 	
 	public Timeline getAnimacionD() {

@@ -24,7 +24,7 @@ public class Enemigo implements Serializable{
 		this.puntos = puntos;
 		this.imagen = imagen;
 		this.vivo = vivo;
-		this.setDireccion(direccion);
+		this.direccion=direccion;
 	}
 
 	public int getPosX() {

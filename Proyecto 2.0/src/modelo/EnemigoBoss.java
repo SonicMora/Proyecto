@@ -1,7 +1,9 @@
 package modelo;
 
+import java.io.Serializable;
+
 @SuppressWarnings("serial")
-public class EnemigoBoss extends EnemigoAgresivo {
+public class EnemigoBoss extends EnemigoAgresivo implements Serializable{
 
 	private int vida;
 

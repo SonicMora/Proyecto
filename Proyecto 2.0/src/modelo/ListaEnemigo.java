@@ -1,6 +1,9 @@
 package modelo;
 
-public class ListaEnemigo {
+import java.io.Serializable;
+
+@SuppressWarnings("serial")
+public class ListaEnemigo implements Serializable{
 
 	private Enemigo cabeza;
 	
@@ -29,7 +32,7 @@ public class ListaEnemigo {
 			}
 			temp.setSiguiente(nuevo);
 		}
-		setSize(getSize() + 1);
+		setSize(size() + 1);
 	}
 	
 	public void clear() {
@@ -50,7 +53,7 @@ public class ListaEnemigo {
 		return temp;
 	}
 
-	public int getSize() {
+	public int size() {
 		return size;
 	}
 

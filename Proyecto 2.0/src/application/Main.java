@@ -1,6 +1,9 @@
 package application;
 	
+import java.util.Optional;
+
 import javafx.application.Application;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -13,19 +16,31 @@ public class Main extends Application {
 		
 	public Main() {
 		game=new Juego();
+		iniciarJuego();
+	}
+	
+	public void iniciarJuego() {
+		TextInputDialog dialog = new TextInputDialog("");
+		dialog.setTitle("Registrar usuario");
+		dialog.setHeaderText(null);
+		dialog.setContentText("Escribe tu nombre:");
+
+		Optional<String> result = dialog.showAndWait();
+		if (result.isPresent()){
+			game.cargarUsuarios(result.get());
+		}		
 	}
 	
 	@Override
 	public void start(Stage primaryStage) {
 		try {
 			BorderPane root=new BorderPane();
-			GameController scene = new GameController(root, Juego.ANCHO_VENTANA, Juego.ALTO_VENTANA+50);
+			GameController scene = new GameController(root, Juego.ANCHO_VENTANA+140, Juego.ALTO_VENTANA+50);
 			primaryStage.setScene(scene);
 			primaryStage.show();
 			
 			scene.setOnKeyPressed(e->{
 				if(e.getCode()==KeyCode.SPACE) {
-//					getGame().getUsuario().setPuntos(Main.getGame().getUsuario().getPuntos()+1);
 					if(getGame().getUsuario().getAvatar().isDisparando()==false) {
 						getGame().getUsuario().getAvatar().setDisparando(true);
 						getGame().getUsuario().getAvatar().getBala().setX(getGame().getUsuario().getAvatar().getPosX());

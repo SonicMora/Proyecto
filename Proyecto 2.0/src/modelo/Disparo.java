@@ -1,6 +1,12 @@
 package modelo;
 
-public class Disparo {
+import java.io.Serializable;
+
+import interfaces.InterfaceReloadE;
+import interfaces.InterfaceReloadP;
+
+@SuppressWarnings("serial")
+public class Disparo implements Serializable, InterfaceReloadP, InterfaceReloadE{
 
 	private int largo;
 	private int ancho;
@@ -17,7 +23,13 @@ public class Disparo {
 		setDamage(50);
 	}
 
-	public void reload() {
+	@Override
+	public void reloadE() {
+		setY(35);
+	}
+	
+	@Override
+	public void reloadP() {
 		setY(Juego.ALTO_VENTANA-165);
 	}
 	
@@ -37,10 +49,14 @@ public class Disparo {
 		this.ancho = ancho;
 	}
 	
-	public void mover() {
+	public void moverP() {
 		y-=50;
 	}
 
+	public void moverE() {
+		y+=50;
+	}
+	
 	public int getX() {
 		return x;
 	}

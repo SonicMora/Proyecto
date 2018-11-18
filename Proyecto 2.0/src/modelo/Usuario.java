@@ -13,16 +13,18 @@ public class Usuario implements Serializable, Comparable<Usuario>{
 	
 	private String nombre;	
 
-	private Usuario siguiente;
+	private Usuario derecho;
+	private Usuario izquierdo;
 	
 	public Usuario(String nombre) {
 		avatar=new Personaje(Personaje.IZQ);
 		this.vidas = 3;
 		this.puntos = 0;
-		this.nivel = 0;
+		this.nivel = 1;
 		this.nombre = nombre;
 		
-		siguiente=null;
+		derecho=null;
+		izquierdo=null;
 	}
 
 	public Personaje getAvatar() {
@@ -89,11 +91,19 @@ public class Usuario implements Serializable, Comparable<Usuario>{
 		avatar.moverIzquierda();
 	}
 
-	public Usuario getSiguiente() {
-		return siguiente;
+	public Usuario getDerecho() {
+		return derecho;
 	}
 
-	public void setSiguiente(Usuario siguiente) {
-		this.siguiente = siguiente;
+	public void setDerecho(Usuario siguiente) {
+		this.derecho = siguiente;
+	}
+
+	public Usuario getIzquierdo() {
+		return izquierdo;
+	}
+
+	public void setIzquierdo(Usuario izquierdo) {
+		this.izquierdo = izquierdo;
 	}
 }

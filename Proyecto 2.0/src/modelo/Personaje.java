@@ -2,8 +2,11 @@ package modelo;
 
 import java.io.Serializable;
 
+import interfaces.InterfaceDisparar;
+import interfaces.InterfaceReloadP;
+
 @SuppressWarnings("serial")
-public class Personaje implements Serializable{
+public class Personaje implements Serializable, InterfaceReloadP, InterfaceDisparar {
 
 	public static final String DER="data/usuarioD.png";
 	public static final String IZQ="data/usuarioI.png";
@@ -31,13 +34,13 @@ public class Personaje implements Serializable{
 		
 		this.disparando = false;
 		bala=new Disparo(0);
-		reload();
+		reloadP();
 	}
-
-	public void reload() {
+	
+	public void reloadP() {
 		if(bala.getY()<5) {
 			disparando=false;
-			bala.reload();
+			bala.reloadP();
 		}
 	}
 	
@@ -115,9 +118,10 @@ public class Personaje implements Serializable{
 		this.bala = bala;
 	}
 	
+	@Override
 	public void disparar() {
 		if(isDisparando()==true) {
-			bala.mover();
+			bala.moverP();
 		}
 	}
 	
