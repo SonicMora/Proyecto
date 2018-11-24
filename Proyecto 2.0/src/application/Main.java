@@ -2,7 +2,11 @@ package application;
 	
 import java.util.Optional;
 
+import excepciones.UsuarioRepetidoException;
 import javafx.application.Application;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
@@ -19,7 +23,7 @@ public class Main extends Application {
 		iniciarJuego();
 	}
 	
-	public void iniciarJuego() {
+	public static void iniciarJuego() {
 		TextInputDialog dialog = new TextInputDialog("");
 		dialog.setTitle("Registrar usuario");
 		dialog.setHeaderText(null);
@@ -27,8 +31,12 @@ public class Main extends Application {
 
 		Optional<String> result = dialog.showAndWait();
 		if (result.isPresent()){
-			game.cargarUsuarios(result.get());
-		}		
+			try {
+				game.cargarUsuarios(result.get());
+			} catch (UsuarioRepetidoException e) {
+				mostrar(e.getMessage());
+			}
+		}
 	}
 	
 	@Override
@@ -50,6 +58,12 @@ public class Main extends Application {
 					scene.moverI();
 				}else if(e.getCode()==KeyCode.RIGHT) {
 					scene.moverD();
+				}else if(e.getCode()==KeyCode.G) {
+					scene.guardar();
+				}else if(e.getCode()==KeyCode.P) {
+					scene.verPuntajes();
+				}else if(e.getCode()==KeyCode.B) {
+					scene.buscar();
 				}
  			});
 			scene.setOnKeyReleased(e->{
@@ -61,6 +75,22 @@ public class Main extends Application {
 			});
 		} catch(Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	public static void mostrar(String err) {
+		Alert alerta=new Alert(AlertType.NONE);
+		
+		ButtonType aceptar=new ButtonType("Aceptar");
+		
+		alerta.getButtonTypes().add(aceptar);
+		
+		alerta.setHeaderText("Ha ocurrido un error");
+		alerta.setTitle("This game");
+		alerta.setContentText(err);
+		Optional<ButtonType> result=alerta.showAndWait();
+		if(result.get()==aceptar) {
+			iniciarJuego();
 		}
 	}
 	

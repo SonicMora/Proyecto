@@ -2,8 +2,9 @@ package modelo;
 
 import java.io.Serializable;
 
-@SuppressWarnings("serial")
-public class EnemigoBoss extends EnemigoAgresivo implements Serializable{
+public class EnemigoBoss extends EnemigoA implements Serializable{
+
+	private static final long serialVersionUID = 1L;
 
 	private int vida;
 
@@ -19,7 +20,6 @@ public class EnemigoBoss extends EnemigoAgresivo implements Serializable{
 	public void setVida(int vida) {
 		this.vida = vida;
 	}
-	
 	
 	
 }

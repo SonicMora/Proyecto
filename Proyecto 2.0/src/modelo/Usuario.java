@@ -2,6 +2,8 @@ package modelo;
 
 import java.io.Serializable;
 
+import excepciones.UsuarioRepetidoException;
+
 @SuppressWarnings("serial")
 public class Usuario implements Serializable, Comparable<Usuario>{
 	
@@ -26,7 +28,25 @@ public class Usuario implements Serializable, Comparable<Usuario>{
 		derecho=null;
 		izquierdo=null;
 	}
-
+	
+	public void insertar(Usuario nuevo) throws UsuarioRepetidoException {
+    	if(this.nombre.compareTo(nuevo.nombre)>0) {
+    		if(this.izquierdo==null) {
+    			this.izquierdo=nuevo;
+    		}else {
+    			this.izquierdo.insertar(nuevo);
+    		}
+    	}else if(this.nombre.compareTo(nuevo.nombre)<0) {
+    		if(this.derecho==null) {
+    			this.derecho=nuevo;
+    		}else {
+    			this.derecho.insertar(nuevo);
+    		}
+    	}else if(this.nombre.compareTo(nuevo.nombre)==0) {
+    		throw new UsuarioRepetidoException(nuevo.nombre);
+    	}
+    }
+	
 	public Personaje getAvatar() {
 		return avatar;
 	}
@@ -81,8 +101,8 @@ public class Usuario implements Serializable, Comparable<Usuario>{
 		}else {
 			return 0;	
 		}
-	}	
-	
+	}
+
 	public void moverDerecha() {
 		avatar.moverDerecha();
 	}
@@ -105,5 +125,42 @@ public class Usuario implements Serializable, Comparable<Usuario>{
 
 	public void setIzquierdo(Usuario izquierdo) {
 		this.izquierdo = izquierdo;
+	}
+	
+	public boolean isHoja() {
+		return (getDerecho()==null && getIzquierdo()==null);
+	}
+	
+	public Usuario eliminar(String unNombre) {
+		if(isHoja()) {
+			return null;
+		}
+		if(unNombre.equalsIgnoreCase(nombre)) {
+			if(izquierdo==null)
+				return derecho;
+			if(derecho==null)
+				return izquierdo;
+			Usuario suce=derecho.darMenor();
+			derecho = derecho.eliminar(suce.nombre);
+			suce.izquierdo=izquierdo;
+			suce.derecho=derecho;
+			return suce;
+		}
+		else if(nombre.compareToIgnoreCase(unNombre)>0) {
+			izquierdo=izquierdo.eliminar(unNombre);
+		}else {
+			if(derecho!=null)
+				derecho=derecho.eliminar(unNombre);
+		}
+		return this;
+	}
+	
+	public Usuario darMenor() {
+        return (izquierdo==null) ? this : izquierdo.darMenor();
+    }
+	
+	@Override
+	public String toString() {
+		return getNombre()+" "+getPuntos();
 	}
 }

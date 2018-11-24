@@ -52,7 +52,15 @@ public class ListaEnemigo implements Serializable{
 		}
 		return temp;
 	}
-
+	
+//	public Enemigo get(int index, int c, Enemigo a) {
+//		if(index==c) {
+//			return a;
+//		}else {
+//			return get(index, c+1, a.getSiguiente());
+//		}
+//	}
+	
 	public int size() {
 		return size;
 	}
