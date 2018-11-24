@@ -1,15 +1,15 @@
 package modelo;
 
 import java.io.Serializable;
-import java.security.SecureRandom;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import interfaces.InterfaceDisparar;
 import interfaces.InterfaceReloadE;
 
-@SuppressWarnings("serial")
-public class EnemigoAgresivo extends Enemigo implements Serializable, InterfaceReloadE, InterfaceDisparar {
+public class EnemigoA extends Enemigo implements Serializable, InterfaceReloadE, InterfaceDisparar {
+
+	private static final long serialVersionUID = 1L;
 
 	private Timer timer;
 	
@@ -23,7 +23,7 @@ public class EnemigoAgresivo extends Enemigo implements Serializable, InterfaceR
 	
 	private long period;
 	
-	public EnemigoAgresivo(int posX, int posY, int puntos, String imagen, boolean vivo, char direccion) {
+	public EnemigoA(int posX, int posY, int puntos, String imagen, boolean vivo, char direccion) {
 		super(posX, posY, puntos, imagen, vivo, direccion);
 		
 		shoot=new Disparo(0);
@@ -32,8 +32,6 @@ public class EnemigoAgresivo extends Enemigo implements Serializable, InterfaceR
 		
 		delay=2000;
 		period=4000;
-		
-		disparoEnemigo();
 	}
 		
 	public boolean isDisparando() {
@@ -44,16 +42,12 @@ public class EnemigoAgresivo extends Enemigo implements Serializable, InterfaceR
 		this.disparando = disparando;
 	}
 
-	public void setDelay() {
-		SecureRandom ran=new SecureRandom();
-		long d=3000+ran.nextInt(5000);
-		delay=d;
+	public void setDelay(long delay) {
+		this.delay=delay;
 	}
 	
-	public void setPeriod() {
-		SecureRandom ran=new SecureRandom();
-		long p=3000+ran.nextInt(4000);
-		period=p;
+	public void setPeriod(long period) {
+		this.period=period;
 	}
 	
 	public long getDelay() {
@@ -75,8 +69,10 @@ public class EnemigoAgresivo extends Enemigo implements Serializable, InterfaceR
 			public void run() {
 				if(disparando==false) {
 					disparando=true;
+					disparar();
 					shoot.setY(getPosY());
 					shoot.setX(getPosX());
+					reloadE();
 				}
 			}
 		};
@@ -98,4 +94,8 @@ public class EnemigoAgresivo extends Enemigo implements Serializable, InterfaceR
 		}
 	}
 	
+	@Override
+	public String toString() {
+		return getPosX()+""+ getPosY()+""+ getPuntos()+""+ getImagen()+""+ isVivo()+""+ getDireccion();
+	}
 }
