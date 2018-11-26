@@ -7,7 +7,7 @@ import static org.junit.Assert.fail;
 
 import org.junit.jupiter.api.Test;
 
-import excepciones.UsuarioRepetidoException;
+import excepciones.*;
 import modelo.ABBUsuario;
 import modelo.Usuario;
 
@@ -77,7 +77,7 @@ class ABBTest {
 		
 		try {
 			assertEquals(arbol.getRaiz().getIzquierdo(), arbol.buscar(arbol.getRaiz(), "Armando"));
-		} catch (UsuarioRepetidoException e) {
+		} catch (UsuarioNoExisteException e) {
 			fail("No se encontró el usuario");
 		}
 	}
@@ -87,7 +87,7 @@ class ABBTest {
 		stage2();
 		try {
 			arbol.buscar(arbol.getRaiz(), "Paco");
-		} catch (UsuarioRepetidoException e) {
+		} catch (UsuarioNoExisteException e) {
 			assertTrue("El usuario no existe, debía generarse la excepcion", true);
 		}
 	}

@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import excepciones.ArbolVacioException;
 import excepciones.PuntajeNoExiste;
+import excepciones.UsuarioNoExisteException;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Bounds;
@@ -162,8 +163,8 @@ public class GameController extends Scene {
 		animacionBE=new Timeline(new KeyFrame(Duration.millis(30), e->{
 			if(este.isDisparando()) {
 				laserBoss.setVisible(true);
-				laserBoss.setX(Main.getGame().geteB().getShot().getX());
-				laserBoss.setY(Main.getGame().geteB().getShot().getY());
+				laserBoss.setX(Main.getGame().geteB().getShoot().getX());
+				laserBoss.setY(Main.getGame().geteB().getShoot().getY());
 			}else {
 				laserBoss.setVisible(false);
 			}
@@ -377,12 +378,12 @@ public class GameController extends Scene {
 		Main.getGame().guardarUsuarios();
 	}
 	
-	public void buscar() {
+	public void buscar(int x) {
+		
 		TextInputDialog dialog = new TextInputDialog("");
 		dialog.setTitle("Buscar usuario");
 		dialog.setHeaderText(null);
-		dialog.setContentText("Escribe el puntaje del usuario que quieres buscar:");
-
+		
 		Alert puntajes=new Alert(AlertType.NONE);
 		puntajes.setHeaderText("PUNTAJES DE LA PIPOL QUE HA JUGADO");
 		puntajes.setTitle("This game");
@@ -390,19 +391,54 @@ public class GameController extends Scene {
 		ButtonType aceptar=new ButtonType("Aceptar");
 		
 		puntajes.getButtonTypes().add(aceptar);
-		
-		Optional<String> result = dialog.showAndWait();
-		if (result.isPresent()){
-			try {
-				puntajes.setContentText(Main.getGame().busquedaBinaria(Integer.parseInt(result.get())));
-				Optional<ButtonType> result2=puntajes.showAndWait();
-				if(result2.get()==aceptar) {
-					puntajes.close();
+		if(x>0) {
+			dialog.setContentText("Escribe el nombre del usuario que quieres buscar");
+			Optional<String> result = dialog.showAndWait();
+			if (result.isPresent()){
+				try {
+					puntajes.setContentText(Main.getGame().getArbolUsuarios().buscar(Main.getGame().getArbolUsuarios().getRaiz(), result.get()).toString());
+					Optional<ButtonType> result2=puntajes.showAndWait();
+					if(result2.get()==aceptar) {
+						puntajes.close();
+					}
+				} catch (NumberFormatException | UsuarioNoExisteException e) {
+					Main.mostrar(e.getMessage());
 				}
-			} catch (NumberFormatException | PuntajeNoExiste e) {
-				Main.mostrar(e.getMessage());
+			}
+		}else {
+			dialog.setContentText("Escribe el puntaje del usuario que quieres buscar");
+			Optional<String> result = dialog.showAndWait();
+			if (result.isPresent()){
+				try {
+					puntajes.setContentText(Main.getGame().busquedaBinaria(Integer.parseInt(result.get())));
+					Optional<ButtonType> result2=puntajes.showAndWait();
+					if(result2.get()==aceptar) {
+						puntajes.close();
+					}
+				} catch (NumberFormatException | PuntajeNoExiste e) {
+					Main.mostrar(e.getMessage());
+				}
 			}
 		}	
+	}
+	
+	public void seleccionarBusqueda() {
+		Alert seleccionarBusqueda=new Alert(AlertType.CONFIRMATION);
+		seleccionarBusqueda.setContentText("Seleccione el tipo de busqueda");
+		seleccionarBusqueda.setHeaderText(null);
+		seleccionarBusqueda.getButtonTypes().clear();
+		
+		ButtonType nombre=new ButtonType("Buscar por nombre");
+		ButtonType puntos=new ButtonType("Buscar por puntaje");
+		
+		seleccionarBusqueda.getButtonTypes().addAll(nombre, puntos);
+		Optional<ButtonType> result=seleccionarBusqueda.showAndWait();
+		if(result.get()==nombre) {
+			buscar(1);
+		}else {
+			buscar(-1);
+		}
+		
 	}
 	
 	public Timeline getAnimacionD() {

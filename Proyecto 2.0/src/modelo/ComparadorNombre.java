@@ -2,6 +2,11 @@ package modelo;
 
 import java.util.Comparator;
 
+/**
+ * Clase ComparadorNombre
+ * @author Victor Mora
+ *
+ */
 public class ComparadorNombre implements Comparator<Usuario>{
 
 	@Override
