@@ -30,8 +30,10 @@ public class EnemigoA extends Enemigo implements Serializable, InterfaceReloadE,
 		
 		this.disparando=false;
 		
-		delay=2000;
-		period=4000;
+		delay=3000;
+		period=5000;
+		
+		disparoEnemigo();
 	}
 		
 	public boolean isDisparando() {
@@ -70,9 +72,6 @@ public class EnemigoA extends Enemigo implements Serializable, InterfaceReloadE,
 				if(disparando==false) {
 					disparando=true;
 					disparar();
-					shoot.setY(getPosY());
-					shoot.setX(getPosX());
-					reloadE();
 				}
 			}
 		};
@@ -90,7 +89,10 @@ public class EnemigoA extends Enemigo implements Serializable, InterfaceReloadE,
 	@Override
 	public void disparar() {
 		if(disparando=true) {
-			shoot.moverE();
+			shoot.moverE();			
+			shoot.setY(getPosY());
+			shoot.setX(getPosX());
+			reloadE();
 		}
 	}
 	

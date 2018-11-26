@@ -20,7 +20,7 @@ public class Disparo implements Serializable, InterfaceReloadP, InterfaceReloadE
 		largo=50;
 		ancho=20;
 		y=Juego.ALTO_VENTANA-165;
-		setDamage(50);
+		setDamage(250);
 	}
 
 	@Override

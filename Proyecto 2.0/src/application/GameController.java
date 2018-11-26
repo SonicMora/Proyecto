@@ -15,9 +15,10 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -47,7 +48,10 @@ public class GameController extends Scene {
 	private Timeline animacionB;
 	private Timeline animacionBE;
 	private Timeline animationE;
+	private Timeline animationMB;
 		
+	private ProgressBar vidaBoss;
+	
 	private Pane ajam;
 	
 	private BorderPane bP;
@@ -119,7 +123,9 @@ public class GameController extends Scene {
 	
 	public void pasarAlBoss() {
 		boss=new ImageView(new Image(Main.getGame().geteB().getImagen(), 100, 100, true, true));
+		vidaBoss=new ProgressBar(0);
 		ajam.getChildren().add(boss);
+		ajam.getChildren().add(vidaBoss);
 		moverBoss();
 	}
 	
@@ -131,13 +137,14 @@ public class GameController extends Scene {
 	}
 	
 	public void moverBoss() {
-		Timeline a=new Timeline(new KeyFrame(Duration.millis(30), e->{
+		animationMB=new Timeline(new KeyFrame(Duration.millis(30), e->{
 			corregirEnemigos(Main.getGame().geteB());
 			boss.setX(Main.getGame().geteB().getPosX());
-//			disparoEnemigo(Main.getGame().geteB());
+			vidaBoss.setLayoutX(boss.getX());
+			disparoEnemigo(Main.getGame().geteB());
 		}));
-		a.setCycleCount(Timeline.INDEFINITE);
-		a.play();
+		animationMB.setCycleCount(Timeline.INDEFINITE);
+		animationMB.play();
 	}
 	
 	public void moverEnemigos() {
@@ -152,14 +159,14 @@ public class GameController extends Scene {
 	}
 	
 	public void disparoEnemigo(EnemigoBoss este) {
-		if(!este.isDisparando()) {
-			este.disparoEnemigo();
-		}
-		animacionBE=new Timeline(new KeyFrame(Duration.millis(3000), e->{
-			laserBoss.setVisible(true);
-			laserBoss.setX(Main.getGame().geteB().getShot().getX());
-			laserBoss.setY(Main.getGame().geteB().getShot().getY());
-			este.reloadE();
+		animacionBE=new Timeline(new KeyFrame(Duration.millis(30), e->{
+			if(este.isDisparando()) {
+				laserBoss.setVisible(true);
+				laserBoss.setX(Main.getGame().geteB().getShot().getX());
+				laserBoss.setY(Main.getGame().geteB().getShot().getY());
+			}else {
+				laserBoss.setVisible(false);
+			}
 		}));
 		animacionBE.setCycleCount(Timeline.INDEFINITE);
 		animacionBE.play();
@@ -196,23 +203,41 @@ public class GameController extends Scene {
 			Main.getGame().getUsuario().getAvatar().disparar();
 			laserU.setX(Main.getGame().getUsuario().getAvatar().getBala().getX());
 			laserU.setY(Main.getGame().getUsuario().getAvatar().getBala().getY()+60);
-			
-			for(int i=0;i<getEnemigos().size();i++) {
-				if(getEnemigos().get(i).contains(new Point2D(laserU.getX(), laserU.getY()))) {
-					Main.getGame().getListaEnemigos().get(i).setVivo(false);
-					Main.getGame().getUsuario().setPuntos(Main.getGame().getUsuario().getPuntos()+Main.getGame().getListaEnemigos().get(i).getPuntos());
-					getEnemigos().get(i).setVisible(false);
-					ajam.getChildren().remove(getEnemigos().get(i));
-					pasarLvl();
-				}
+			if(Main.getGame().getUsuario().getNivel()==1) {
+				disparoLvl1();
+			}else {
+				disparoLvl2();
 			}
-			laserU.setVisible(true);
-			
-			Main.getGame().getUsuario().getAvatar().reloadP();
-			dejarDeDisparar();
 		}));
 		animacionB.setCycleCount(Timeline.INDEFINITE);
 		animacionB.play();
+	}
+	
+	public void disparoLvl1() {
+		for(int i=0;i<getEnemigos().size();i++) {
+			if(getEnemigos().get(i).contains(new Point2D(laserU.getX(), laserU.getY()))) {
+				Main.getGame().getListaEnemigos().get(i).setVivo(false);
+				Main.getGame().getUsuario().setPuntos(Main.getGame().getUsuario().getPuntos()+Main.getGame().getListaEnemigos().get(i).getPuntos());
+				getEnemigos().get(i).setVisible(false);
+				ajam.getChildren().remove(getEnemigos().get(i));
+				pasarLvl();
+			}
+		}
+		laserU.setVisible(true);
+		Main.getGame().getUsuario().getAvatar().reloadP();
+		dejarDeDisparar();
+	}
+	
+	public void disparoLvl2() {
+		if(boss.contains(new Point2D(laserU.getX(), laserU.getY()))) {
+			Main.getGame().geteB().setVida(Main.getGame().geteB().getVida()-Main.getGame().getUsuario().getAvatar().getBala().getDamage());
+			Main.getGame().getUsuario().setPuntos(Main.getGame().getUsuario().getPuntos()+Main.getGame().geteB().getPuntos());
+			vidaBoss.setProgress(vidaBoss.getProgress()+Main.getGame().getUsuario().getAvatar().getBala().getDamage());
+			System.out.println(vidaBoss.getProgress());
+		}
+		laserU.setVisible(true);
+		Main.getGame().getUsuario().getAvatar().reloadP();
+		dejarDeDisparar();
 	}
 	
 	public void pasarLvl() {
@@ -240,7 +265,7 @@ public class GameController extends Scene {
 		}else if(este.getDireccion()=='I' && este.getPosX()<=bounds.getMinX()) {
 			este.setDireccion('D');
 			este.moverD();
-		}	
+		}
 	}
 	
 	public void dejarDeDisparar() {
@@ -310,7 +335,7 @@ public class GameController extends Scene {
 		animacionPuntaje.play();
 	}
 	
-	public void verPuntajes() {
+	public void verPuntajes(int x) {
 		Alert puntajes=new Alert(AlertType.NONE);
 		
 		ButtonType aceptar=new ButtonType("Aceptar");
@@ -318,11 +343,33 @@ public class GameController extends Scene {
 		puntajes.getButtonTypes().add(aceptar);
 		
 		puntajes.setHeaderText("PUNTAJES DE LA PIPOL QUE HA JUGADO");
-		puntajes.setContentText(Main.getGame().arrayToString(Main.getGame().ordenPuntos()));
 		puntajes.setTitle("This game");
+		if(x>0) {
+			puntajes.setContentText(Main.getGame().arrayToString(Main.getGame().ordenPuntos()));
+		}else {
+			puntajes.setContentText(Main.getGame().arrayToString(Main.getGame().ordenNombres()));
+		}
 		Optional<ButtonType> result=puntajes.showAndWait();
 		if(result.get()==aceptar) {
 			puntajes.close();
+		}
+	}
+	
+	public void seleccionarOrden() {
+		Alert orden=new Alert(AlertType.CONFIRMATION);
+		
+		ButtonType nombres=new ButtonType("Orden Alfabético");
+		ButtonType puntos=new ButtonType("Orden Puntaje");
+		
+		orden.getButtonTypes().clear();
+		orden.getButtonTypes().addAll(nombres, puntos);
+		orden.setHeaderText(null);
+		orden.setContentText("Seleccione un tipo de ordenamiento");
+		Optional<ButtonType> result=orden.showAndWait();
+		if(result.get()==nombres) {
+			verPuntajes(-1);
+		}else {
+			verPuntajes(1);
 		}
 	}
 	
@@ -340,11 +387,18 @@ public class GameController extends Scene {
 		puntajes.setHeaderText("PUNTAJES DE LA PIPOL QUE HA JUGADO");
 		puntajes.setTitle("This game");
 		
+		ButtonType aceptar=new ButtonType("Aceptar");
+		
+		puntajes.getButtonTypes().add(aceptar);
+		
 		Optional<String> result = dialog.showAndWait();
 		if (result.isPresent()){
 			try {
 				puntajes.setContentText(Main.getGame().busquedaBinaria(Integer.parseInt(result.get())));
-				puntajes.showAndWait();
+				Optional<ButtonType> result2=puntajes.showAndWait();
+				if(result2.get()==aceptar) {
+					puntajes.close();
+				}
 			} catch (NumberFormatException | PuntajeNoExiste e) {
 				Main.mostrar(e.getMessage());
 			}
@@ -378,5 +432,7 @@ public class GameController extends Scene {
 	public void setEnemigos(ArrayList<ImageView> enemigos) {
 		this.enemigos = enemigos;
 	}
+	
+	
 	
 }

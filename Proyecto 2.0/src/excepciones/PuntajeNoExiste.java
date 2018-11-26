@@ -1,5 +1,6 @@
 package excepciones;
 
+@SuppressWarnings("serial")
 public class PuntajeNoExiste extends Exception {
 
 	public PuntajeNoExiste(int pt) {

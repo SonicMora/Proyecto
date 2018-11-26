@@ -1,1 +1,1 @@
-50,30,500,Boss/KingCristian.png,true,'D'
+50,30,500,Boss/KingCristian.png,true,D

@@ -61,7 +61,7 @@ public class Main extends Application {
 				}else if(e.getCode()==KeyCode.G) {
 					scene.guardar();
 				}else if(e.getCode()==KeyCode.P) {
-					scene.verPuntajes();
+					scene.seleccionarOrden();
 				}else if(e.getCode()==KeyCode.B) {
 					scene.buscar();
 				}

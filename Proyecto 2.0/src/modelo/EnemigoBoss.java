@@ -10,7 +10,8 @@ public class EnemigoBoss extends EnemigoA implements Serializable{
 
 	public EnemigoBoss(int posX, int posY, int puntos, String imagen, boolean vivo, char direccion) {
 		super(posX, posY, puntos, imagen, vivo, direccion);
-		vida=5000;
+		setPuntos(300);
+		vida=2500;
 	}
 
 	public int getVida() {
